@@ -13,6 +13,7 @@ const navItems = [
   { href: "/summarize", label: "Summarize" },
   { href: "/flashcards", label: "Flashcards" },
   { href: "/quiz", label: "Quiz" },
+  { href: "/pomodoro", label: "Pomodoro" },
   { href: "/concept-map", label: "Concept Map" },
 ];
 

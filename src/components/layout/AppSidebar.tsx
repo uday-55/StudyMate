@@ -12,6 +12,7 @@ import {
   Share2,
   Settings,
   Home,
+  Clock,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import {
@@ -27,6 +28,7 @@ const sidebarNavItems = [
   { href: "/summarize", icon: FileText, label: "Summarization" },
   { href: "/flashcards", icon: BookOpen, label: "Flashcards" },
   { href: "/quiz", icon: HelpCircle, label: "Quiz" },
+  { href: "/pomodoro", icon: Clock, label: "Pomodoro Timer" },
   { href: "/concept-map", icon: Share2, label: "Concept Map" },
 ];
 
