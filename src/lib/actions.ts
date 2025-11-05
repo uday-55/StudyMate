@@ -102,7 +102,9 @@ export async function handleGenerateFlashcards(prevState: any, formData: FormDat
     });
 
     return { status: "success", flashcards: result.flashcards };
-  } catch (error) a.message : "An unknown error occurred." };
+  } catch (error) {
+    console.error(error);
+    return { status: "error", message: error instanceof Error ? error.message : "An unknown error occurred." };
   }
 }
 
