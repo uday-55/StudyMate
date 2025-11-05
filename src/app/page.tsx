@@ -66,10 +66,10 @@ export default function RootPage() {
           )}
           <div className="container px-4 md:px-6">
             <div className="max-w-3xl mx-auto">
-              <h1 className="text-4xl font-bold tracking-tight text-primary-foreground sm:text-5xl md:text-6xl">
+              <h1 className="text-4xl font-bold tracking-tight text-white sm:text-5xl md:text-6xl">
                 Welcome to StudyMate
               </h1>
-              <p className="mt-4 text-lg text-primary-foreground/80 md:text-xl">
+              <p className="mt-4 text-lg text-gray-200 md:text-xl">
                 Your AI-powered study partner. Upload a document and let our AI help you learn smarter, not harder.
               </p>
               <div className="mt-8 flex justify-center">
