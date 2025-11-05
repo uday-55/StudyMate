@@ -34,7 +34,7 @@ export default function LandingHeader() {
               key={item.href}
               href={item.href}
               className={cn(
-                "text-base font-medium text-foreground/70 transition-colors hover:text-foreground/90 hover:font-semibold",
+                "text-lg font-medium text-foreground/70 transition-colors hover:text-foreground/90 hover:font-semibold",
                 pathname === item.href && "text-primary font-semibold border-b-2 border-primary"
               )}
             >
