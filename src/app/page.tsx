@@ -11,6 +11,7 @@ import {
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { placeholderImages } from '@/lib/placeholder-images';
+import LandingHeader from '@/components/layout/LandingHeader';
 
 const features = [
   {
@@ -50,8 +51,9 @@ export default function RootPage() {
 
   return (
     <div className="flex flex-col min-h-screen">
+       <LandingHeader />
        <main className="flex-1">
-        <section className="relative w-full h-[60vh] flex items-center justify-center text-center">
+        <section className="relative w-full h-[60vh] flex items-center justify-center text-center bg-background">
           {heroImage && (
              <Image 
               src={heroImage.imageUrl}
@@ -62,12 +64,12 @@ export default function RootPage() {
               priority
             />
           )}
-          <div className="container px-4 md:px-6 text-primary-foreground">
+          <div className="container px-4 md:px-6">
             <div className="max-w-3xl mx-auto">
-              <h1 className="text-4xl font-bold tracking-tight sm:text-5xl md:text-6xl">
+              <h1 className="text-4xl font-bold tracking-tight text-primary-foreground sm:text-5xl md:text-6xl">
                 Welcome to StudyMate
               </h1>
-              <p className="mt-4 text-lg md:text-xl text-primary-foreground/80">
+              <p className="mt-4 text-lg text-primary-foreground/80 md:text-xl">
                 Your AI-powered study partner. Upload a document and let our AI help you learn smarter, not harder.
               </p>
               <div className="mt-8 flex justify-center">
