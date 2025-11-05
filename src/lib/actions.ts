@@ -129,10 +129,8 @@ export async function handleGenerateQuiz(prevState: any, formData: FormData) {
       studyMaterial: pdfData.text,
       numberOfQuestions: validatedFields.data.numberOfQuestions,
     });
-    
-    const quizData = JSON.parse(result.quiz);
 
-    return { status: "success", quiz: quizData.quiz };
+    return { status: "success", quiz: result.quiz };
   } catch (error) {
     console.error(error);
     return { status: "error", message: error instanceof Error ? error.message : "An unknown error occurred." };

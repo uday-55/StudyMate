@@ -1,3 +1,4 @@
+
 'use server';
 /**
  * @fileOverview A quiz generation AI agent.
@@ -22,7 +23,11 @@ const GenerateQuizInputSchema = z.object({
 export type GenerateQuizInput = z.infer<typeof GenerateQuizInputSchema>;
 
 const GenerateQuizOutputSchema = z.object({
-  quiz: z.string().describe('The generated quiz in JSON format.'),
+  quiz: z.array(z.object({
+    question: z.string().describe("The question for the quiz item."),
+    answer: z.string().describe("The answer for the quiz item."),
+    difficulty: z.enum(["Easy", "Medium", "Hard"]).describe("The difficulty of the question.")
+  })).describe('The generated quiz.')
 });
 export type GenerateQuizOutput = z.infer<typeof GenerateQuizOutputSchema>;
 
@@ -39,31 +44,10 @@ const prompt = ai.definePrompt({
   You will generate a quiz from the provided study material.
   The quiz should have the number of questions specified in the input.
   The quiz questions should be categorized by difficulty (Easy, Medium, Hard).
-  The quiz should be returned in JSON format.
+  The quiz should be returned as a JSON object with a "quiz" key, which is an array of quiz items.
 
   Study Material: {{{studyMaterial}}}
   Number of Questions: {{{numberOfQuestions}}}
-
-  Example Quiz format:
-  {
-    "quiz": [
-      {
-        "question": "Question 1",
-        "answer": "Answer 1",
-        "difficulty": "Easy"
-      },
-      {
-        "question": "Question 2",
-        "answer": "Answer 2",
-        "difficulty": "Medium"
-      },
-      {
-        "question": "Question 3",
-        "answer": "Answer 3",
-        "difficulty": "Hard"
-      }
-    ]
-  }
   `,
 });
 
