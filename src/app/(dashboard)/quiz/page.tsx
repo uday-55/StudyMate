@@ -1,7 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, useRef } from "react";
-import { useFormState } from "react-dom";
+import React, { useState, useEffect, useRef, useActionState } from "react";
 import { handleGenerateQuiz } from "@/lib/actions";
 import FileUpload from "@/components/FileUpload";
 import { Button } from "@/components/ui/button";
@@ -25,14 +24,12 @@ type QuizQuestion = {
 export default function QuizPage() {
   const [pdfFile, setPdfFile] = useState<File | null>(null);
   const [numQuestions, setNumQuestions] = useState(5);
-  const [state, formAction] = useFormState(handleGenerateQuiz, null);
-  const [isGenerating, setIsGenerating] = useState(false);
+  const [state, formAction, isGenerating] = useActionState(handleGenerateQuiz, null);
   const formRef = useRef<HTMLFormElement>(null);
   const { toast } = useToast();
 
   const handleFormSubmit = (formData: FormData) => {
     if (!pdfFile) return;
-    setIsGenerating(true);
     formData.append("pdf", pdfFile);
     formData.set("numberOfQuestions", String(numQuestions));
     formAction(formData);
@@ -40,7 +37,6 @@ export default function QuizPage() {
 
   useEffect(() => {
     if (state) {
-      setIsGenerating(false);
       if (state.status === 'error') {
         toast({
           variant: "destructive",

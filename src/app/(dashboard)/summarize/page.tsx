@@ -1,7 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, useRef } from "react";
-import { useFormState } from "react-dom";
+import React, { useState, useEffect, useRef, useActionState } from "react";
 import { handleGenerateSummary } from "@/lib/actions";
 import FileUpload from "@/components/FileUpload";
 import { Button } from "@/components/ui/button";
@@ -15,21 +14,18 @@ import { useToast } from "@/hooks/use-toast";
 
 export default function SummarizePage() {
   const [pdfFile, setPdfFile] = useState<File | null>(null);
-  const [state, formAction] = useFormState(handleGenerateSummary, null);
-  const [isGenerating, setIsGenerating] = useState(false);
+  const [state, formAction, isGenerating] = useActionState(handleGenerateSummary, null);
   const formRef = useRef<HTMLFormElement>(null);
   const { toast } = useToast();
 
   const handleFormSubmit = (formData: FormData) => {
     if (!pdfFile) return;
-    setIsGenerating(true);
     formData.append("pdf", pdfFile);
     formAction(formData);
   };
   
   useEffect(() => {
     if (state) {
-      setIsGenerating(false);
       if (state.status === 'error') {
         toast({
           variant: "destructive",

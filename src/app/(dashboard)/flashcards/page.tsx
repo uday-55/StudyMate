@@ -1,7 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, useRef } from "react";
-import { useFormState } from "react-dom";
+import React, { useState, useEffect, useRef, useActionState } from "react";
 import { handleGenerateFlashcards } from "@/lib/actions";
 import FileUpload from "@/components/FileUpload";
 import { Button } from "@/components/ui/button";
@@ -19,14 +18,12 @@ type Flashcard = { question: string; answer: string; };
 export default function FlashcardsPage() {
   const [pdfFile, setPdfFile] = useState<File | null>(null);
   const [numFlashcards, setNumFlashcards] = useState(5);
-  const [state, formAction] = useFormState(handleGenerateFlashcards, null);
-  const [isGenerating, setIsGenerating] = useState(false);
+  const [state, formAction, isGenerating] = useActionState(handleGenerateFlashcards, null);
   const formRef = useRef<HTMLFormElement>(null);
   const { toast } = useToast();
 
   const handleFormSubmit = (formData: FormData) => {
     if (!pdfFile) return;
-    setIsGenerating(true);
     formData.append("pdf", pdfFile);
     formData.set("numberOfFlashcards", String(numFlashcards));
     formAction(formData);
@@ -34,7 +31,6 @@ export default function FlashcardsPage() {
   
   useEffect(() => {
     if (state) {
-      setIsGenerating(false);
       if (state.status === 'error') {
         toast({
           variant: "destructive",

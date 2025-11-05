@@ -1,7 +1,7 @@
 "use client";
 
-import React, { useState, useRef, useEffect } from "react";
-import { useFormState, useFormStatus } from "react-dom";
+import React, { useState, useRef, useEffect, useActionState } from "react";
+import { useFormStatus } from "react-dom";
 import { Paperclip, Send, Mic } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import FileUpload from "@/components/FileUpload";
@@ -46,7 +46,7 @@ export default function ChatInterface() {
   const formRef = useRef<HTMLFormElement>(null);
   const { toast } = useToast();
 
-  const [state, formAction] = useFormState(handlePdfQuestion, null);
+  const [state, formAction] = useActionState(handlePdfQuestion, null);
 
   useEffect(() => {
     if (state?.status === "success" && state.answer) {
