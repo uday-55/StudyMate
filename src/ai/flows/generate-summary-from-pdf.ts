@@ -37,15 +37,15 @@ const prompt = ai.definePrompt({
 
 You will generate a summary of the PDF content, taking into account the specified summary type and optional page numbers.
 
-{% if pageNumbers %}
-You will summarize only the content from the following pages: {{pageNumbers}}.
-{% endif %}
+{{#if pageNumbers}}
+You will summarize only the content from the following pages: {{{pageNumbers}}}.
+{{/if}}
 
-The summary type is: {{summaryType}}.
+The summary type is: {{{summaryType}}}.
 
 Use the following PDF text to generate the summary:
 
-{{pdfText}}`,
+{{{pdfText}}}`,
 });
 
 const generateSummaryFlow = ai.defineFlow(
