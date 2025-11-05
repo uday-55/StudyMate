@@ -9,63 +9,79 @@ import {
   BookOpen,
   HelpCircle,
   Share2,
-  Home,
   Settings,
+  Home,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { Badge } from "@/components/ui/badge";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 const sidebarNavItems = [
-  { href: "/", icon: Home, label: "Home" },
+  { href: "/", icon: Home, label: "Dashboard" },
   { href: "/qa", icon: Bot, label: "PDF Q&A" },
   { href: "/summarize", icon: FileText, label: "Summarization" },
   { href: "/flashcards", icon: BookOpen, label: "Flashcards" },
   { href: "/quiz", icon: HelpCircle, label: "Quiz" },
-  { href: "/concept-map", icon: Share2, label: "Concept Map", isNew: true },
+  { href: "/concept-map", icon: Share2, label: "Concept Map" },
 ];
 
 export default function AppSidebar() {
   const pathname = usePathname();
+  const isRoot = pathname === '/';
 
   return (
-    <aside className="hidden border-r bg-muted/40 md:block">
-      <div className="flex h-full max-h-screen flex-col gap-2">
-        <div className="flex h-14 items-center border-b px-4 lg:h-[60px] lg:px-6">
-          <Link href="/" className="flex items-center gap-2 font-semibold">
-            <Lightbulb className="h-6 w-6 text-primary" />
-            <span className="">StudyMate</span>
+    <aside className="fixed inset-y-0 left-0 z-10 hidden w-14 flex-col border-r bg-background sm:flex">
+      <TooltipProvider>
+        <nav className="flex flex-col items-center gap-4 px-2 sm:py-5">
+          <Link
+            href="#"
+            className="group flex h-9 w-9 shrink-0 items-center justify-center gap-2 rounded-full bg-primary text-lg font-semibold text-primary-foreground md:h-8 md:w-8 md:text-base"
+          >
+            <Lightbulb className="h-4 w-4 transition-all group-hover:scale-110" />
+            <span className="sr-only">StudyMate</span>
           </Link>
-        </div>
-        <div className="flex-1">
-          <nav className="grid items-start px-2 text-sm font-medium lg:px-4">
-            {sidebarNavItems.map((item) => (
+          {sidebarNavItems.map((item) => (
+            <Tooltip key={item.href}>
+              <TooltipTrigger asChild>
+                <Link
+                  href={item.href}
+                  className={cn(
+                    "flex h-9 w-9 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:text-foreground md:h-8 md:w-8",
+                    (item.href === '/' && isRoot) || (item.href !== '/' && pathname.startsWith(item.href))
+                      ? "bg-accent text-accent-foreground"
+                      : ""
+                  )}
+                >
+                  <item.icon className="h-5 w-5" />
+                  <span className="sr-only">{item.label}</span>
+                </Link>
+              </TooltipTrigger>
+              <TooltipContent side="right">{item.label}</TooltipContent>
+            </Tooltip>
+          ))}
+        </nav>
+        <nav className="mt-auto flex flex-col items-center gap-4 px-2 sm:py-5">
+          <Tooltip>
+            <TooltipTrigger asChild>
               <Link
-                key={item.href}
-                href={item.href}
+                href="/settings"
                 className={cn(
-                  "flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary",
-                  (pathname === '/' && item.href === '/') || (pathname.startsWith(item.href) && item.href !== '/') && "bg-muted text-primary"
+                  "flex h-9 w-9 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:text-foreground md:h-8 md:w-8",
+                  pathname.startsWith('/settings') && "bg-accent text-accent-foreground"
                 )}
               >
-                <item.icon className="h-4 w-4" />
-                {item.label}
-                {item.isNew && <Badge className="ml-auto">Coming Soon</Badge>}
+                <Settings className="h-5 w-5" />
+                <span className="sr-only">Settings</span>
               </Link>
-            ))}
-          </nav>
-        </div>
-        <div className="mt-auto p-4">
-           <nav className="grid items-start px-2 text-sm font-medium lg:px-4">
-             <Link
-                href="#"
-                className="flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary"
-              >
-                <Settings className="h-4 w-4" />
-                Settings
-              </Link>
-           </nav>
-        </div>
-      </div>
+            </TooltipTrigger>
+            <TooltipContent side="right">Settings</TooltipContent>
+          </Tooltip>
+        </nav>
+      </TooltipProvider>
     </aside>
   );
 }

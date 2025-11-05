@@ -1,3 +1,10 @@
 {
-  "placeholderImages": []
+  "placeholderImages": [
+    {
+      "id": "hero-background",
+      "description": "A vibrant abstract background with flowing lines and shapes, representing creativity and learning.",
+      "imageUrl": "https://images.unsplash.com/photo-1621947081720-86970823b77a?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw4fHxhYnN0cmFjdCUyMGJhY2tncm91bmR8ZW58MHx8fHwxNzYyMzEwMDE5fDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "abstract background"
+    }
+  ]
 }
