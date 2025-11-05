@@ -10,8 +10,8 @@ export default {
   theme: {
     extend: {
       fontFamily: {
-        body: ['Lato', 'sans-serif'],
-        headline: ['Lato', 'sans-serif'],
+        body: ['Asimovian', 'sans-serif'],
+        headline: ['Asimovian', 'sans-serif'],
         code: ['Source Code Pro', 'monospace'],
       },
       colors: {
