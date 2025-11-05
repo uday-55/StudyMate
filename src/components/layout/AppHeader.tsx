@@ -9,6 +9,8 @@ import {
   HelpCircle,
   Share2,
   PanelLeft,
+  Home,
+  Search,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -20,35 +22,37 @@ import ThemeToggle from "@/components/ThemeToggle";
 import { usePathname } from "next/navigation";
 import React from "react";
 import { cn } from "@/lib/utils";
+import { Input } from "../ui/input";
+import { Badge } from "../ui/badge";
 
 const sidebarNavItems = [
+  { href: "/", icon: Home, label: "Home" },
   { href: "/qa", icon: Bot, label: "PDF Q&A" },
   { href: "/summarize", icon: FileText, label: "Summarization" },
   { href: "/flashcards", icon: BookOpen, label: "Flashcards" },
   { href: "/quiz", icon: HelpCircle, label: "Quiz" },
-  { href: "/concept-map", icon: Share2, label: "Concept Map" },
+  { href: "/concept-map", icon: Share2, label: "Concept Map", isNew: true },
 ];
 
 export default function AppHeader() {
   const pathname = usePathname();
-  const currentNavItem = sidebarNavItems.find(item => pathname.startsWith(item.href));
 
   return (
-    <header className="sticky top-0 z-30 flex h-14 items-center gap-4 border-b bg-background px-4 sm:static sm:h-auto sm:border-0 sm:bg-transparent sm:px-6">
+    <header className="flex h-14 items-center gap-4 border-b bg-muted/40 px-4 lg:h-[60px] lg:px-6">
       <Sheet>
         <SheetTrigger asChild>
-          <Button size="icon" variant="outline" className="sm:hidden">
+          <Button variant="outline" size="icon" className="shrink-0 md:hidden">
             <PanelLeft className="h-5 w-5" />
-            <span className="sr-only">Toggle Menu</span>
+            <span className="sr-only">Toggle navigation menu</span>
           </Button>
         </SheetTrigger>
-        <SheetContent side="left" className="sm:max-w-xs">
-          <nav className="grid gap-6 text-lg font-medium">
+        <SheetContent side="left" className="flex flex-col">
+          <nav className="grid gap-2 text-lg font-medium">
             <Link
-              href="/qa"
-              className="group flex h-10 w-10 shrink-0 items-center justify-center gap-2 rounded-full bg-primary text-lg font-semibold text-primary-foreground md:text-base"
+              href="/"
+              className="flex items-center gap-2 text-lg font-semibold mb-4"
             >
-              <Lightbulb className="h-5 w-5 transition-all group-hover:scale-110" />
+              <Lightbulb className="h-6 w-6 text-primary" />
               <span className="sr-only">StudyMate</span>
             </Link>
             {sidebarNavItems.map((item) => (
@@ -56,19 +60,30 @@ export default function AppHeader() {
                 key={item.href}
                 href={item.href}
                 className={cn(
-                  "flex items-center gap-4 px-2.5 text-muted-foreground hover:text-foreground",
-                  pathname.startsWith(item.href) && "text-foreground"
+                  "mx-[-0.65rem] flex items-center gap-4 rounded-xl px-3 py-2 text-muted-foreground hover:text-foreground",
+                  pathname.startsWith(item.href) && "bg-muted text-foreground"
                 )}
               >
                 <item.icon className="h-5 w-5" />
                 {item.label}
+                {item.isNew && <Badge className="ml-auto">Coming Soon</Badge>}
               </Link>
             ))}
           </nav>
         </SheetContent>
       </Sheet>
-      <h1 className="text-xl font-semibold hidden md:flex">{currentNavItem?.label || 'Dashboard'}</h1>
-      <div className="relative ml-auto flex-1 md:grow-0" />
+      <div className="w-full flex-1">
+        <form>
+          <div className="relative">
+            <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+            <Input
+              type="search"
+              placeholder="Search documents..."
+              className="w-full appearance-none bg-background pl-8 shadow-none md:w-2/3 lg:w-1/3"
+            />
+          </div>
+        </form>
+      </div>
       <ThemeToggle />
     </header>
   );
