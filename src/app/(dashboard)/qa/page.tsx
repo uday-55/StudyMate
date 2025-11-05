@@ -2,7 +2,7 @@
 
 import React, { useState, useRef, useEffect, useActionState } from "react";
 import { useFormStatus } from "react-dom";
-import { Paperclip, Send, Mic } from "lucide-react";
+import { Paperclip, Send, Mic, Square, Volume2, Loader2, Waves } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import FileUpload from "@/components/FileUpload";
 import { Button } from "@/components/ui/button";
@@ -10,7 +10,7 @@ import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { handlePdfQuestion } from "@/lib/actions";
+import { handlePdfQuestion, textToSpeech } from "@/lib/actions";
 import type { ChatMessage } from "@/lib/types";
 import { cn } from "@/lib/utils";
 import { useToast } from "@/hooks/use-toast";
@@ -20,7 +20,7 @@ function SubmitButton() {
   return (
     <Button type="submit" size="icon" disabled={pending}>
       {pending ? (
-        <div className="h-5 w-5 animate-spin rounded-full border-b-2 border-current" />
+        <Loader2 className="h-5 w-5 animate-spin" />
       ) : (
         <Send className="h-5 w-5" />
       )}
@@ -44,9 +44,15 @@ export default function QAPage() {
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const scrollAreaRef = useRef<HTMLDivElement>(null);
   const formRef = useRef<HTMLFormElement>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
+  const audioRef = useRef<HTMLAudioElement | null>(null);
   const { toast } = useToast();
 
   const [state, formAction] = useActionState(handlePdfQuestion, null);
+
+  const [isRecording, setIsRecording] = useState(false);
+  const recognitionRef = useRef<any>(null);
+
 
   useEffect(() => {
     if (state?.status === "success" && state.answer) {
@@ -88,7 +94,65 @@ export default function QAPage() {
     formAction(formData);
     formRef.current?.reset();
   };
+
+  const handleMicClick = () => {
+    if (isRecording) {
+      recognitionRef.current?.stop();
+      setIsRecording(false);
+      return;
+    }
+
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if (!SpeechRecognition) {
+      toast({ variant: 'destructive', title: 'Speech recognition not supported in this browser.' });
+      return;
+    }
+
+    recognitionRef.current = new SpeechRecognition();
+    recognitionRef.current.continuous = false;
+    recognitionRef.current.interimResults = true;
+    recognitionRef.current.lang = 'en-US';
+
+    recognitionRef.current.onstart = () => setIsRecording(true);
+    recognitionRef.current.onend = () => setIsRecording(false);
+    recognitionRef.current.onerror = (event: any) => {
+      toast({ variant: 'destructive', title: 'Speech recognition error', description: event.error });
+      setIsRecording(false);
+    };
+
+    recognitionRef.current.onresult = (event: any) => {
+      const transcript = Array.from(event.results)
+        .map((result: any) => result[0])
+        .map((result) => result.transcript)
+        .join('');
+      if (inputRef.current) {
+        inputRef.current.value = transcript;
+      }
+      if (event.results[0].isFinal) {
+        if(formRef.current) {
+            formRef.current.requestSubmit();
+        }
+      }
+    };
+    recognitionRef.current.start();
+  };
   
+  const readAloud = async (text: string) => {
+    try {
+      const result = await textToSpeech(text);
+      if (result.status === 'success' && result.media) {
+          if (audioRef.current) {
+              audioRef.current.src = result.media;
+              audioRef.current.play();
+          }
+      } else {
+        toast({ variant: 'destructive', title: 'Text-to-speech failed', description: result.message });
+      }
+    } catch(e) {
+      toast({ variant: 'destructive', title: 'Text-to-speech failed', description: (e as Error).message });
+    }
+  }
+
   const isAwaitingResponse = messages.some(m => m.role === 'system');
 
   return (
@@ -96,7 +160,7 @@ export default function QAPage() {
       <Card className="md:col-span-1 h-fit">
         <CardHeader>
           <CardTitle className="flex items-center gap-2 text-2xl">
-            PDF Q&A
+            PDF Q&amp;A
           </CardTitle>
           <CardDescription>Upload a document and start asking questions.</CardDescription>
         </CardHeader>
@@ -132,13 +196,24 @@ export default function QAPage() {
                     )}
                     <div
                       className={cn(
-                        "max-w-xl rounded-lg px-4 py-2 prose prose-sm dark:prose-invert",
+                        "max-w-xl rounded-lg px-4 py-2 prose prose-sm dark:prose-invert relative group",
                         message.role === "user"
                           ? "bg-primary text-primary-foreground"
                           : "bg-muted"
                       )}
                     >
                       {message.role === 'system' ? <TypingIndicator /> : <p>{message.content}</p>}
+                      {message.role === 'assistant' && (
+                        <Button 
+                          variant="ghost" 
+                          size="icon" 
+                          className="absolute -top-2 -right-2 h-7 w-7 opacity-0 group-hover:opacity-100 transition-opacity"
+                          onClick={() => readAloud(message.content)}
+                        >
+                            <Volume2 className="h-4 w-4"/>
+                            <span className="sr-only">Read aloud</span>
+                        </Button>
+                      )}
                     </div>
                      {message.role === "user" && (
                       <Avatar className="h-8 w-8 border">
@@ -150,7 +225,7 @@ export default function QAPage() {
               </AnimatePresence>
               {!messages.length && pdfFile && (
                  <div className="text-center text-muted-foreground pt-16">
-                    Ask a question about <strong>{pdfFile.name}</strong> to get started.
+                    Ask a question about &lt;strong&gt;{pdfFile.name}&lt;/strong&gt; to get started.
                 </div>
               )}
                {!messages.length && !pdfFile && (
@@ -165,11 +240,20 @@ export default function QAPage() {
             action={handleFormSubmit}
             className="flex items-center gap-2 mt-4"
           >
-            <Button variant="ghost" size="icon" type="button" className="shrink-0" disabled={!pdfFile || isAwaitingResponse}>
-              <Mic className="h-5 w-5" />
-              <span className="sr-only">Use Microphone</span>
+            <Button 
+              variant="ghost" 
+              size="icon" 
+              type="button" 
+              className="shrink-0 relative" 
+              onClick={handleMicClick}
+              disabled={!pdfFile || isAwaitingResponse}
+            >
+              {isRecording ? &lt;Square className="h-5 w-5"/&gt; : &lt;Mic className="h-5 w-5" /&gt;}
+              {isRecording && &lt;Waves className="h-5 w-5 absolute text-primary animate-ping"/&gt;}
+              <span className="sr-only">{isRecording ? "Stop Recording" : "Use Microphone"}</span>
             </Button>
             <Input
+              ref={inputRef}
               name="question"
               placeholder="Ask a question..."
               autoComplete="off"
@@ -177,6 +261,7 @@ export default function QAPage() {
             />
             <SubmitButton />
           </form>
+          <audio ref={audioRef} className="hidden" />
         </CardContent>
       </Card>
     </div>

@@ -6,6 +6,7 @@ import { askPdfQuestion } from "@/ai/flows/pdf-question-answering";
 import { generateSummary } from "@/ai/flows/generate-summary-from-pdf";
 import { generateFlashcards } from "@/ai/flows/generate-flashcards-from-pdf";
 import { generateQuiz } from "@/ai/flows/auto-generate-quiz-from-content";
+import { convertTextToSpeech } from "@/ai/flows/text-to-speech";
 import pdf from "pdf-parse";
 
 // Utility to read file from FormData
@@ -134,5 +135,16 @@ export async function handleGenerateQuiz(prevState: any, formData: FormData) {
   } catch (error) {
     console.error(error);
     return { status: "error", message: error instanceof Error ? error.message : "An unknown error occurred." };
+  }
+}
+
+// Text-to-Speech Action
+export async function textToSpeech(text: string) {
+  try {
+    const result = await convertTextToSpeech(text);
+    return { status: 'success', media: result.media };
+  } catch (error) {
+    console.error(error);
+    return { status: 'error', message: error instanceof Error ? error.message : "An unknown error occurred." };
   }
 }
