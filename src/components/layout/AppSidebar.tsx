@@ -1,3 +1,4 @@
+
 "use client";
 
 import Link from "next/link";
@@ -34,14 +35,14 @@ export default function AppSidebar() {
   const isRoot = pathname === '/';
 
   return (
-    <aside className="fixed inset-y-0 left-0 z-10 hidden w-14 flex-col border-r bg-background sm:flex">
+    <aside className="fixed inset-y-0 left-0 z-10 hidden w-16 flex-col border-r bg-background sm:flex">
       <TooltipProvider>
-        <nav className="flex flex-col items-center gap-4 px-2 sm:py-5">
+        <nav className="flex flex-col items-center gap-6 px-2 sm:py-6">
           <Link
             href="#"
-            className="group flex h-9 w-9 shrink-0 items-center justify-center gap-2 rounded-full bg-primary text-lg font-semibold text-primary-foreground md:h-8 md:w-8 md:text-base"
+            className="group flex h-10 w-10 shrink-0 items-center justify-center gap-2 rounded-full bg-primary text-lg font-semibold text-primary-foreground md:h-10 md:w-10"
           >
-            <Lightbulb className="h-4 w-4 transition-all group-hover:scale-110" />
+            <Lightbulb className="h-5 w-5 transition-all group-hover:scale-110" />
             <span className="sr-only">StudyMate</span>
           </Link>
           {sidebarNavItems.map((item) => (
@@ -50,35 +51,35 @@ export default function AppSidebar() {
                 <Link
                   href={item.href}
                   className={cn(
-                    "flex h-9 w-9 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:text-foreground md:h-8 md:w-8",
+                    "flex h-10 w-10 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:text-foreground hover:bg-accent md:h-10 md:w-10",
                     (item.href === '/' && isRoot) || (item.href !== '/' && pathname.startsWith(item.href))
-                      ? "bg-accent text-accent-foreground"
+                      ? "bg-primary text-primary-foreground hover:bg-primary/90 hover:text-primary-foreground"
                       : ""
                   )}
                 >
-                  <item.icon className="h-5 w-5" />
+                  <item.icon className="h-6 w-6" />
                   <span className="sr-only">{item.label}</span>
                 </Link>
               </TooltipTrigger>
-              <TooltipContent side="right">{item.label}</TooltipContent>
+              <TooltipContent side="right" className="text-base">{item.label}</TooltipContent>
             </Tooltip>
           ))}
         </nav>
-        <nav className="mt-auto flex flex-col items-center gap-4 px-2 sm:py-5">
+        <nav className="mt-auto flex flex-col items-center gap-6 px-2 sm:py-6">
           <Tooltip>
             <TooltipTrigger asChild>
               <Link
                 href="/settings"
                 className={cn(
-                  "flex h-9 w-9 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:text-foreground md:h-8 md:w-8",
-                  pathname.startsWith('/settings') && "bg-accent text-accent-foreground"
+                  "flex h-10 w-10 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:text-foreground md:h-10 md:w-10",
+                  pathname.startsWith('/settings') && "bg-primary text-primary-foreground hover:bg-primary/90 hover:text-primary-foreground"
                 )}
               >
-                <Settings className="h-5 w-5" />
+                <Settings className="h-6 w-6" />
                 <span className="sr-only">Settings</span>
               </Link>
             </TooltipTrigger>
-            <TooltipContent side="right">Settings</TooltipContent>
+            <TooltipContent side="right" className="text-base">Settings</TooltipContent>
           </Tooltip>
         </nav>
       </TooltipProvider>
