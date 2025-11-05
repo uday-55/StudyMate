@@ -10,9 +10,9 @@ export default {
   theme: {
     extend: {
       fontFamily: {
-        body: ['Asimovian', 'sans-serif'],
-        headline: ['Asimovian', 'sans-serif'],
-        code: ['Source Code Pro', 'monospace'],
+        body: ['"Exo 2"', 'sans-serif'],
+        headline: ['"Exo 2"', 'sans-serif'],
+        code: ['"Source Code Pro"', 'monospace'],
       },
       colors: {
         background: 'hsl(var(--background))',
