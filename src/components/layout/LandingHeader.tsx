@@ -23,8 +23,8 @@ export default function LandingHeader() {
     <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="container flex h-16 items-center">
         <Link href="/" className="mr-8 flex items-center space-x-2">
-          <Lightbulb className="h-6 w-6 text-primary" />
-          <span className="font-bold sm:inline-block text-lg">
+          <Lightbulb className="h-8 w-8 text-primary" />
+          <span className="font-bold sm:inline-block text-2xl">
             StudyMate
           </span>
         </Link>
@@ -34,7 +34,7 @@ export default function LandingHeader() {
               key={item.href}
               href={item.href}
               className={cn(
-                "text-lg font-medium text-foreground/70 transition-colors hover:text-foreground/90 hover:font-semibold",
+                "text-xl font-medium text-foreground/70 transition-colors hover:text-foreground/90 hover:font-semibold",
                 pathname === item.href && "text-primary font-semibold border-b-2 border-primary"
               )}
             >
