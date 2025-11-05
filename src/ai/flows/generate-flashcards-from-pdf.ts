@@ -1,3 +1,4 @@
+
 'use server';
 /**
  * @fileOverview A flashcard generation AI agent.
@@ -51,7 +52,7 @@ const prompt = ai.definePrompt({
   PDF Content: {{{pdfText}}}
 
   Ensure that the flashcards are clear, concise, and cover the key concepts from the material.
-  Format the output as a JSON object with a "flashcards" key, where the value is an array of objects, and each object has a "question" and an "answer" field.
+  Format the output as a JSON object with a "flashcards" key. The value of "flashcards" should be an array of objects, where each object has a "question" and an "answer" field.
 `,
 });
 
