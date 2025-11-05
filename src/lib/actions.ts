@@ -7,7 +7,9 @@ import { generateSummary } from "@/ai/flows/generate-summary-from-pdf";
 import { generateFlashcards } from "@/ai/flows/generate-flashcards-from-pdf";
 import { generateQuiz } from "@/ai/flows/auto-generate-quiz-from-content";
 import { convertTextToSpeech } from "@/ai/flows/text-to-speech";
+import { generalChat } from "@/ai/flows/general-chat";
 import pdf from "pdf-parse";
+import type { ChatMessage } from "./types";
 
 // Utility to read file from FormData
 async function readFileFromFormData(formData: FormData, fieldName: string): Promise<{ buffer: Buffer, dataUri: string, fileName: string }> {
@@ -47,6 +49,37 @@ export async function handlePdfQuestion(prevState: any, formData: FormData) {
     return { status: "error", message: error instanceof Error ? error.message : "An unknown error occurred." };
   }
 }
+
+// General Chat Action
+const chatSchema = z.object({
+  message: z.string().min(1, "Message is required."),
+  history: z.string(),
+});
+export async function handleGeneralChat(prevState: any, formData: FormData) {
+  try {
+    const validatedFields = chatSchema.safeParse({
+      message: formData.get("message"),
+      history: formData.get("history"),
+    });
+
+    if (!validatedFields.success) {
+      return { status: "error", message: "Invalid input." };
+    }
+    
+    const history: ChatMessage[] = JSON.parse(validatedFields.data.history);
+
+    const result = await generalChat({
+      history,
+      message: validatedFields.data.message,
+    });
+
+    return { status: "success", answer: result.message };
+  } catch (error) {
+    console.error(error);
+    return { status: "error", message: error instanceof Error ? error.message : "An unknown error occurred." };
+  }
+}
+
 
 // Summary Action
 const summarySchema = z.object({

@@ -14,6 +14,7 @@ const navItems = [
   { href: "/flashcards", label: "Flashcards" },
   { href: "/quiz", label: "Quiz" },
   { href: "/pomodoro", label: "Pomodoro" },
+  { href: "/notes", label: "Notes" },
   { href: "/concept-map", label: "Concept Map" },
 ];
 

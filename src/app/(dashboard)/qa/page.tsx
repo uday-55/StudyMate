@@ -2,7 +2,7 @@
 
 import React, { useState, useRef, useEffect, useActionState } from "react";
 import { useFormStatus } from "react-dom";
-import { Paperclip, Send, Mic, Square, Volume2, Loader2, Waves } from "lucide-react";
+import { Paperclip, Send, Mic, Square, Volume2, Loader2, Waves, MessageCircle, Bot } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import FileUpload from "@/components/FileUpload";
 import { Button } from "@/components/ui/button";
@@ -10,15 +10,17 @@ import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { handlePdfQuestion, textToSpeech } from "@/lib/actions";
+import { handlePdfQuestion, handleGeneralChat, textToSpeech } from "@/lib/actions";
 import type { ChatMessage } from "@/lib/types";
 import { cn } from "@/lib/utils";
 import { useToast } from "@/hooks/use-toast";
+import { Label } from "@/components/ui/label";
+import { Switch } from "@/components/ui/switch";
 
-function SubmitButton() {
+function SubmitButton({ disabled }: { disabled: boolean }) {
   const { pending } = useFormStatus();
   return (
-    <Button type="submit" size="icon" disabled={pending}>
+    <Button type="submit" size="icon" disabled={disabled || pending}>
       {pending ? (
         <Loader2 className="h-5 w-5 animate-spin" />
       ) : (
@@ -39,20 +41,26 @@ function TypingIndicator() {
   )
 }
 
+type ChatMode = "qa" | "chat";
+
 export default function QAPage() {
   const [pdfFile, setPdfFile] = useState<File | null>(null);
   const [messages, setMessages] = useState<ChatMessage[]>([]);
+  const [chatMode, setChatMode] = useState<ChatMode>("qa");
+
   const scrollAreaRef = useRef<HTMLDivElement>(null);
   const formRef = useRef<HTMLFormElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const { toast } = useToast();
 
-  const [state, formAction] = useActionState(handlePdfQuestion, null);
+  const [qaState, qaFormAction] = useActionState(handlePdfQuestion, null);
+  const [chatState, chatFormAction] = useActionState(handleGeneralChat, null);
 
   const [isRecording, setIsRecording] = useState(false);
   const recognitionRef = useRef<any>(null);
 
+  const state = chatMode === 'qa' ? qaState : chatState;
 
   useEffect(() => {
     if (state?.status === "success" && state.answer) {
@@ -82,18 +90,39 @@ export default function QAPage() {
 
   const handleFormSubmit = (formData: FormData) => {
     const question = formData.get("question") as string;
-    if (!question.trim() || !pdfFile) return;
+    if (!question.trim()) return;
+    
+    if (chatMode === 'qa' && !pdfFile) {
+        toast({ variant: 'destructive', title: 'PDF required', description: 'Please upload a PDF for Q&A mode.' });
+        return;
+    }
+
+    const userMessage: ChatMessage = { role: "user", content: question };
 
     setMessages((prev) => [
       ...prev,
-      { role: "user", content: question },
+      userMessage,
       { role: "system", content: "typing" },
     ]);
     
-    formData.append("pdf", pdfFile);
-    formAction(formData);
+    if (chatMode === 'qa') {
+        formData.append("pdf", pdfFile!);
+        qaFormAction(formData);
+    } else {
+        const history = messages.filter(m => m.role !== 'system');
+        formData.append('history', JSON.stringify(history));
+        formData.append('message', question);
+        chatFormAction(formData);
+    }
+    
     formRef.current?.reset();
   };
+  
+  const handleModeChange = (isChatMode: boolean) => {
+    setChatMode(isChatMode ? 'chat' : 'qa');
+    setMessages([]);
+    setPdfFile(null);
+  }
 
   const handleMicClick = () => {
     if (isRecording) {
@@ -160,12 +189,22 @@ export default function QAPage() {
       <Card className="md:col-span-1 h-fit">
         <CardHeader>
           <CardTitle className="flex items-center gap-2 text-2xl">
-            PDF Q&amp;A
+            {chatMode === 'qa' ? <Bot/> : <MessageCircle/>}
+            {chatMode === 'qa' ? 'PDF Q&A' : 'General Chat'}
           </CardTitle>
-          <CardDescription>Upload a document and start asking questions.</CardDescription>
+          <CardDescription>
+            {chatMode === 'qa' ? 'Upload a document to ask questions.' : 'Chat with the AI assistant.'}
+          </CardDescription>
         </CardHeader>
-        <CardContent>
-          <FileUpload onFileChange={setPdfFile} disabled={isAwaitingResponse} />
+        <CardContent className="space-y-4">
+           <div className="flex items-center space-x-2">
+            <Label htmlFor="chat-mode">Q&A Mode</Label>
+            <Switch id="chat-mode" checked={chatMode === 'chat'} onCheckedChange={handleModeChange} />
+            <Label htmlFor="chat-mode">General Chat</Label>
+          </div>
+          {chatMode === 'qa' && (
+            <FileUpload onFileChange={setPdfFile} disabled={isAwaitingResponse} />
+          )}
         </CardContent>
       </Card>
       
@@ -223,14 +262,11 @@ export default function QAPage() {
                   </motion.div>
                 ))}
               </AnimatePresence>
-              {!messages.length && pdfFile && (
+              {!messages.length && (
                  <div className="text-center text-muted-foreground pt-16">
-                    Ask a question about &lt;strong&gt;{pdfFile.name}&lt;/strong&gt; to get started.
-                </div>
-              )}
-               {!messages.length && !pdfFile && (
-                 <div className="text-center text-muted-foreground pt-16">
-                    Please upload a PDF to start chatting.
+                    {chatMode === 'qa' ? (
+                        pdfFile ? `Ask a question about <strong>${pdfFile.name}</strong> to get started.` : 'Please upload a PDF to start chatting.'
+                    ) : 'Ask anything to get started.'}
                 </div>
               )}
             </div>
@@ -246,20 +282,20 @@ export default function QAPage() {
               type="button" 
               className="shrink-0 relative" 
               onClick={handleMicClick}
-              disabled={!pdfFile || isAwaitingResponse}
+              disabled={(chatMode === 'qa' && !pdfFile) || isAwaitingResponse}
             >
-              {isRecording ? &lt;Square className="h-5 w-5"/&gt; : &lt;Mic className="h-5 w-5" /&gt;}
-              {isRecording && &lt;Waves className="h-5 w-5 absolute text-primary animate-ping"/&gt;}
+              {isRecording ? <Square className="h-5 w-5"/> : <Mic className="h-5 w-5" />}
+              {isRecording && <Waves className="h-5 w-5 absolute text-primary animate-ping"/>}
               <span className="sr-only">{isRecording ? "Stop Recording" : "Use Microphone"}</span>
             </Button>
             <Input
               ref={inputRef}
               name="question"
-              placeholder="Ask a question..."
+              placeholder={chatMode === 'qa' ? 'Ask a question about the PDF...' : 'Ask anything...'}
               autoComplete="off"
-              disabled={!pdfFile || isAwaitingResponse}
+              disabled={(chatMode === 'qa' && !pdfFile) || isAwaitingResponse}
             />
-            <SubmitButton />
+            <SubmitButton disabled={(chatMode === 'qa' && !pdfFile) || isAwaitingResponse} />
           </form>
           <audio ref={audioRef} className="hidden" />
         </CardContent>

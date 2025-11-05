@@ -13,6 +13,7 @@ import {
   Settings,
   Home,
   Clock,
+  StickyNote,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import {
@@ -29,6 +30,7 @@ const sidebarNavItems = [
   { href: "/flashcards", icon: BookOpen, label: "Flashcards" },
   { href: "/quiz", icon: HelpCircle, label: "Quiz" },
   { href: "/pomodoro", icon: Clock, label: "Pomodoro Timer" },
+  { href: "/notes", icon: StickyNote, label: "Sticky Notes" },
   { href: "/concept-map", icon: Share2, label: "Concept Map" },
 ];
 
