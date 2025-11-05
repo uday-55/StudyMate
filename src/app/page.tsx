@@ -51,23 +51,23 @@ export default function RootPage() {
   return (
     <div className="flex flex-col min-h-screen">
        <main className="flex-1">
-        <section className="relative w-full h-[60vh] flex items-center justify-center text-center text-white">
+        <section className="relative w-full h-[60vh] flex items-center justify-center text-center">
           {heroImage && (
              <Image 
               src={heroImage.imageUrl}
               alt={heroImage.description}
               fill
-              className="object-cover -z-10 brightness-50"
+              className="object-cover -z-10 brightness-[.25]"
               data-ai-hint={heroImage.imageHint}
               priority
             />
           )}
-          <div className="container px-4 md:px-6">
+          <div className="container px-4 md:px-6 text-primary-foreground">
             <div className="max-w-3xl mx-auto">
               <h1 className="text-4xl font-bold tracking-tight sm:text-5xl md:text-6xl">
                 Welcome to StudyMate
               </h1>
-              <p className="mt-4 text-lg md:text-xl text-gray-200">
+              <p className="mt-4 text-lg md:text-xl text-primary-foreground/80">
                 Your AI-powered study partner. Upload a document and let our AI help you learn smarter, not harder.
               </p>
               <div className="mt-8 flex justify-center">
