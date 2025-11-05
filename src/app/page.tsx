@@ -53,20 +53,20 @@ export default function RootPage() {
     <div className="flex flex-col min-h-screen">
        <LandingHeader />
        <main className="flex-1">
-        <section className="relative w-full h-[60vh] flex items-center justify-center text-center bg-background">
+        <section className="relative w-full h-[60vh] flex items-center justify-center text-center">
           {heroImage && (
              <Image 
               src={heroImage.imageUrl}
               alt={heroImage.description}
               fill
-              className="object-cover -z-10 brightness-[.25]"
+              className="object-cover -z-10 brightness-50"
               data-ai-hint={heroImage.imageHint}
               priority
             />
           )}
           <div className="container px-4 md:px-6">
             <div className="max-w-3xl mx-auto">
-              <h1 className="text-4xl font-bold tracking-tight text-primary-foreground sm:text-5xl md:text-6xl">
+              <h1 className="text-4xl font-bold tracking-tight text-white sm:text-5xl md:text-6xl">
                 Welcome to StudyMate
               </h1>
               <p className="mt-4 text-lg text-gray-200 md:text-xl">
