@@ -82,7 +82,7 @@ const flashcardsSchema = z.object({
   numberOfFlashcards: z.coerce.number().min(1).max(20),
 });
 export async function handleGenerateFlashcards(prevState: any, formData: FormData) {
-    try {
+  try {
     const validatedFields = flashcardsSchema.safeParse({
       topic: formData.get("topic"),
       numberOfFlashcards: formData.get("numberOfFlashcards"),
