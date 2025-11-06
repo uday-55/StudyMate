@@ -5,6 +5,7 @@ import { handleGenerateConceptMap } from "@/lib/actions";
 import FileUpload from "@/components/FileUpload";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { Label } from "@/components/ui/label";
 import { Loader2, Share2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { motion, AnimatePresence } from "framer-motion";
