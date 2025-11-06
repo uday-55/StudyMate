@@ -10,8 +10,8 @@ export default {
   theme: {
     extend: {
       fontFamily: {
-        body: ['"Exo 2"', 'sans-serif'],
-        headline: ['"Exo 2"', 'sans-serif'],
+        body: ['var(--font-exo2)', 'sans-serif'],
+        headline: ['var(--font-exo2)', 'sans-serif'],
         code: ['"Source Code Pro"', 'monospace'],
       },
       colors: {
