@@ -8,6 +8,7 @@ import { generateFlashcards } from "@/ai/flows/generate-flashcards-from-pdf";
 import { generateQuiz } from "@/ai/flows/auto-generate-quiz-from-content";
 import { convertTextToSpeech } from "@/ai/flows/text-to-speech";
 import { generalChat } from "@/ai/flows/general-chat";
+import { generateConceptMap } from "@/ai/flows/generate-concept-map";
 import pdf from "pdf-parse";
 import type { ChatMessage } from "./types";
 
@@ -69,7 +70,7 @@ export async function handleGeneralChat(prevState: any, formData: FormData) {
     const history: ChatMessage[] = JSON.parse(validatedFields.data.history);
 
     const result = await generalChat({
-      history,
+      history: history,
       message: validatedFields.data.message,
     });
 
@@ -179,5 +180,26 @@ export async function textToSpeech(text: string) {
   } catch (error) {
     console.error(error);
     return { status: 'error', message: error instanceof Error ? error.message : "An unknown error occurred." };
+  }
+}
+
+// Concept Map Action
+export async function handleGenerateConceptMap(prevState: any, formData: FormData) {
+  try {
+    const { buffer } = await readFileFromFormData(formData, "pdf");
+    const pdfData = await pdf(buffer);
+
+    if (!pdfData.text) {
+      return { status: "error", message: "Could not extract text from PDF." };
+    }
+
+    const result = await generateConceptMap({
+      text: pdfData.text,
+    });
+
+    return { status: "success", conceptMap: result };
+  } catch (error) {
+    console.error(error);
+    return { status: "error", message: error instanceof Error ? error.message : "An unknown error occurred." };
   }
 }

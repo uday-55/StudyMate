@@ -7,3 +7,4 @@ import '@/ai/flows/generate-flashcards-from-pdf.ts';
 import '@/ai/flows/generate-summary-from-pdf.ts';
 import '@/ai/flows/text-to-speech.ts';
 import '@/ai/flows/general-chat.ts';
+import '@/ai/flows/generate-concept-map.ts';
