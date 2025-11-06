@@ -1,3 +1,4 @@
+
 'use server';
 /**
  * @fileOverview A general purpose AI chatbot.
@@ -11,7 +12,10 @@ import {ai} from '@/ai/genkit';
 import {z} from 'genkit';
 
 const GeneralChatInputSchema = z.object({
-  history: z.array(z.any()).describe("The chat history."),
+  history: z.array(z.object({
+    role: z.string(),
+    content: z.string(),
+  })).describe("The chat history."),
   message: z.string().describe('The user\'s message.'),
 });
 export type GeneralChatInput = z.infer<typeof GeneralChatInputSchema>;
@@ -35,10 +39,10 @@ const prompt = ai.definePrompt({
 
   Here is the chat history:
   {{#each history}}
-  {{#if (eq role 'user')}}
-  User: {{{content}}}
+  {{#if (this.role == 'user')}}
+  User: {{{this.content}}}
   {{else}}
-  StudyMate: {{{content}}}
+  StudyMate: {{{this.content}}}
   {{/if}}
   {{/each}}
 
