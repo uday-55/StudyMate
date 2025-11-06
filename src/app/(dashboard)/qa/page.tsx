@@ -93,7 +93,7 @@ export default function QAPage() {
     if (!question.trim()) return;
     
     if (chatMode === 'qa' && !pdfFile) {
-        toast({ variant: 'destructive', title: 'PDF required', description: 'Please upload a PDF for Q&A mode.' });
+        toast({ variant: 'destructive', title: 'PDF required', description: 'Please upload a PDF for Q&amp;A mode.' });
         return;
     }
 
@@ -190,7 +190,7 @@ export default function QAPage() {
         <CardHeader>
           <CardTitle className="flex items-center gap-2 text-2xl">
             {chatMode === 'qa' ? <Bot/> : <MessageCircle/>}
-            {chatMode === 'qa' ? 'PDF Q&A' : 'General Chat'}
+            {chatMode === 'qa' ? 'PDF Q&amp;A' : 'General Chat'}
           </CardTitle>
           <CardDescription>
             {chatMode === 'qa' ? 'Upload a document to ask questions.' : 'Chat with the AI assistant.'}
@@ -198,7 +198,7 @@ export default function QAPage() {
         </CardHeader>
         <CardContent className="space-y-4">
            <div className="flex items-center space-x-2">
-            <Label htmlFor="chat-mode">Q&A Mode</Label>
+            <Label htmlFor="chat-mode">Q&amp;A Mode</Label>
             <Switch id="chat-mode" checked={chatMode === 'chat'} onCheckedChange={handleModeChange} />
             <Label htmlFor="chat-mode">General Chat</Label>
           </div>
