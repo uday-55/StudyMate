@@ -1,3 +1,4 @@
+
 'use server';
 /**
  * @fileOverview A text-to-speech AI agent.
@@ -58,14 +59,9 @@ const textToSpeechFlow = ai.defineFlow(
   },
   async (query) => {
     const { media } = await ai.generate({
-      model: 'googleai/gemini-2.5-flash-preview-tts',
+      model: 'googleai/chirp-en-us',
       config: {
         responseModalities: ['AUDIO'],
-        speechConfig: {
-          voiceConfig: {
-            prebuiltVoiceConfig: { voiceName: 'Algenib' },
-          },
-        },
       },
       prompt: query,
     });
