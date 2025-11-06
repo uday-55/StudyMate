@@ -9,17 +9,15 @@ import { Label } from "@/components/ui/label";
 import { Loader2, Share2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { motion, AnimatePresence } from "framer-motion";
-import { Skeleton } from "@/components/ui/skeleton";
 import {
   ResponsiveContainer,
   ScatterChart,
   Scatter,
   XAxis,
   YAxis,
-  ZAxis,
   Tooltip,
   Line,
-  Label as RechartsLabel,
+  LabelList,
 } from 'recharts';
 
 type Node = { id: string; label: string; x?: number; y?: number };
@@ -64,7 +62,6 @@ export default function ConceptMapPage() {
     if (state?.status !== 'success' || !state.conceptMap) return null;
     
     const { nodes, edges } = state.conceptMap;
-    const nodeMap = new Map<string, Node>(nodes.map(n => [n.id, { ...n }]));
 
     // Simple physics-based layout
     const positionedNodes = nodes.map((node, i) => ({
@@ -155,22 +152,7 @@ export default function ConceptMapPage() {
                                 })}
 
                                 <Scatter name="Concepts" data={graphData.nodes} fill="hsl(var(--primary))">
-                                  {
-                                    graphData.nodes.map((node, index) => (
-                                      <RechartsLabel
-                                        key={`label-${index}`}
-                                        value={node.label}
-                                        position="top"
-                                        offset={10}
-                                        dataKey={`label-${index}`}
-                                        content={({ x, y, value, ...rest}) => (
-                                            <text x={x} y={y} dy={-10} fill="hsl(var(--foreground))" fontSize={12} textAnchor="middle">
-                                                {value}
-                                            </text>
-                                        )}
-                                      />
-                                    ))
-                                  }
+                                    <LabelList dataKey="label" position="top" offset={10} fill="hsl(var(--foreground))" fontSize={12} />
                                 </Scatter>
                             </ScatterChart>
                         </ResponsiveContainer>
