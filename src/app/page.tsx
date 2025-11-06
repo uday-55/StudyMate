@@ -7,6 +7,8 @@ import {
   HelpCircle,
   Share2,
   ArrowRight,
+  Clock,
+  StickyNote,
 } from 'lucide-react';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -37,6 +39,18 @@ const features = [
     icon: HelpCircle,
     label: 'Quiz',
     description: 'Generate quizzes from your documents to prepare for exams.',
+  },
+  {
+    href: '/pomodoro',
+    icon: Clock,
+    label: 'Pomodoro Timer',
+    description: 'Boost your productivity with focused work sessions.',
+  },
+  {
+    href: '/notes',
+    icon: StickyNote,
+    label: 'Sticky Notes',
+    description: 'Capture your ideas and thoughts on a digital note board.',
   },
   {
     href: '/concept-map',
