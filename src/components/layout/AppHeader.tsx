@@ -22,7 +22,7 @@ export default function AppHeader() {
             <span className="sr-only">Toggle Menu</span>
           </Button>
         </SheetTrigger>
-        <SheetContent side="left" className="sm:max-w-xs">
+        <SheetContent side="left" className="sm:max-w-xs w-72">
           <MobileNav />
         </SheetContent>
       </Sheet>
